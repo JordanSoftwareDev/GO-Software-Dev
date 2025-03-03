@@ -1,0 +1,87 @@
+//This Test class tests the major functions of the Menu class
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+class MenuTest {
+
+    private Menu menu;
+    private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+
+    @BeforeEach
+    void setUp() {
+        menu = new Menu();
+        System.setOut(new PrintStream(outputStreamCaptor));  // Capture System.out output for validation
+    }
+
+    @Test
+    @DisplayName("Create Test")
+    void createRecordTest() {
+        // Simulating user input to create a record
+        String simulatedInput = "Bench Press\n100\n10\n3\n8\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        Day day = menu.createRecord();
+
+        // Verifying the record was created successfully
+        assertNotNull(day, "The created Day object should not be null.");
+        assertEquals("Bench Press", day.getExercise(), "The exercise name should match.");
+        assertEquals(100, day.getWeight(), "The weight should be 100.");
+        assertEquals(10, day.getReps(), "The reps should be 10.");
+        assertEquals(3, day.getSets(), "The sets should be 3.");
+        assertEquals(8, day.getRpe(), "The RPE should be 8.");
+    }
+
+    @Test
+    @DisplayName("Read Test")
+    void readFromFileTest() {
+        String simulatedInput = "testFile.txt\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        String result = menu.readFromFile();
+
+        assertTrue(outputStreamCaptor.toString().contains("Filepath: testFile.txt"), "The output should contain the filepath.");
+    }
+
+    @Test
+    @DisplayName("Update Test")
+    void updateRecordTest() {
+        // Simulates user input
+        Day day = new Day("Squats", 100, 10, 3, 8);
+        Day day2 = new Day("Squats", 120, 8, 4, 9);
+        String simulatedInput = "1\nSquats\n120\n8\n4\n9\n"; // ID to update, exercise, weight, reps, sets, RPE
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        boolean result = menu.updateRecord();
+
+        // Verifies the record was updated
+
+        //assertEquals(day.getExercise(), day2.getExercise());
+        //assertEquals(day.getWeight(), day2.getWeight());
+        //assertEquals(day.getReps(), day2.getReps());
+        //assertEquals(day.getSets(), day2.getSets());
+        //assertEquals(day.getRpe(), day2.getRpe());
+
+        assertTrue(result, "The record should be updated successfully.");
+    }
+
+
+    @Test
+    @DisplayName("Calculate TWL")
+    void calculateTWLTest() {
+        // Simulating user input for calculating TWL
+        String simulatedInput = "1\n";  // Simulating entering an Exercise ID to calculate TWL
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        double twl = menu.calculateTWL();
+
+        // Ensuring that the calculated TWL is non-negative (or some valid value)
+        assertTrue(twl >= 0, "The calculated TWL should be a non-negative value.");
+    }
+
+
+}
